@@ -7,6 +7,7 @@ import { Spacing, BorderRadius, FontWeight } from "shared/styles/styles"
 import { Colors } from "shared/styles/colors"
 import { CenteredContainer } from "shared/components/centered-container/centered-container.component"
 import { Person } from "shared/models/person"
+import { RollInput } from "shared/models/roll"
 import { useApi } from "shared/hooks/use-api"
 import { StudentListTile } from "staff-app/components/student-list-tile/student-list-tile.component"
 import { ActiveRollOverlay, ActiveRollAction } from "staff-app/components/active-roll-overlay/active-roll-overlay.component"
@@ -15,6 +16,7 @@ export const HomeBoardPage: React.FC = () => {
   const [isRollMode, setIsRollMode] = useState(false)
   const [students, setStudents] = useState<Person[]>([])
   const [filteredSstudents, setFilteredSstudents] = useState<Person[]>([])
+  const [attendance, setAttendance] = useState<RollInput>({ student_roll_states: [] })
   const [getStudents, data, loadState] = useApi<{ students: Person[] }>({ url: "get-homeboard-students" })
 
   useEffect(() => {
@@ -85,7 +87,7 @@ export const HomeBoardPage: React.FC = () => {
         {console.log("filteredSstudents", filteredSstudents)}
 
         {loadState === "loaded" && filteredSstudents?.length ? (
-          filteredSstudents.map((s) => <StudentListTile key={s.id} isRollMode={isRollMode} student={s} />)
+          filteredSstudents.map((s) => <StudentListTile key={s.id} isRollMode={isRollMode} student={s} attendance={attendance} setAttendance={setAttendance} />)
         ) : (
           <CenteredContainer>
             <div>No Data</div>
@@ -98,7 +100,7 @@ export const HomeBoardPage: React.FC = () => {
           </CenteredContainer>
         )}
       </S.PageContainer>
-      <ActiveRollOverlay isActive={isRollMode} onItemClick={onActiveRollAction} />
+      <ActiveRollOverlay isActive={isRollMode} onItemClick={onActiveRollAction} attendance={attendance} />
     </>
   )
 }
@@ -180,7 +182,7 @@ const S = {
 
     svg {
       position: absolute;
-      color: #343f64;
+      color: ${Colors.blue.base};
       height: 100%;
       margin: 0 10px;
     }
